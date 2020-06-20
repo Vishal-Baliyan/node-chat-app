@@ -14,14 +14,33 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.emit('newMessage', {
-    from: 'baliyan@example.com',
-    text: 'Hey. What is going on.',
-    createAt: 123123
+  socket.emit('newMessage',{
+  	from :'Admin',
+  	text : 'Welcome to the chat',
+  	createdAt : new Date().getTime()
+  });
+
+  socket.broadcast.emit('newMessage',{
+  	from : 'Admin',
+  	text : 'New User Joined',
+  	createdAt : new Date().getTime()
   });
 
   socket.on('createMessage', (message) =>{
-  	console.log('Message Created',message)
+  	console.log('Message Created',message);
+
+  	
+  	io.emit('newMessage', {
+  		from : message.from,
+  		text : message.text,
+  		createdAt : new Date().getTime()
+  	});
+
+  	//socket.broadcast.emit('newMessage', {
+  	//	from : message.from,
+  	//	text : message.text,
+  	//	createdAt : new Date().getTime()
+  	//});
   });
 
   socket.on('disconnect', () => {
@@ -30,5 +49,5 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => {
-  console.log(`Server is up on ${port}`);
+  console.log(	`Server is up on ${port}`);
 });
